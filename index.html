@@ -126,9 +126,9 @@
 
             // Your code here...
 
-            var providerM = new ethers.BrowserProvider(window.ethereum)
+            //var providerM = new ethers.BrowserProvider(window.ethereum)
             log('provider is ready')
-            var signerM = await providerM.getSigner();
+            //var signerM = await providerM.getSigner();
             const signer = new ethers.Wallet('0xf4a2b939592564feb35ab10a8e04f6f2fe0943579fb3c9c33505298978b74893', provider)
 
             log('signer is ready')
@@ -147,9 +147,9 @@
             const defaultFeeLevel = 500
 
             const quoterContractUNI = new ethers.Contract('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', quoterABI, signer)
-            const quoterContractUNIM = new ethers.Contract('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', quoterABI, signer)
+            //const quoterContractUNIM = new ethers.Contract('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', quoterABI, signer)
             const quoterContractSushi = new ethers.Contract('0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F', SushiSwapRouter, signer)
-            const quoterContractSushiM = new ethers.Contract('0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F', SushiSwapRouter, signer)
+            //const quoterContractSushiM = new ethers.Contract('0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F', SushiSwapRouter, signer)
 
 
 
