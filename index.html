@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Arbitrage Bot</title>
+</head>
+
+<body>
+      <audio id="xyz" src="https://v.delgarm.com/mp3/835/2022/10/07/6340927d26908.mp3" preload="auto"></audio>
+      <h2>Arbitrage Scanner</h2>
+      <style>
+            .smt {
+                  font-size: 0.7rem;
+            }
+
+            table {
+                  border: 1px solid black;
+                  padding: 10px;
+                  overflow-y: scroll;
+            }
+
+            .tbb {
+                  border-bottom: 1px black solid;
+            }
+
+            table thead tr:nth-child(1) th {
+                  background: rgb(245, 245, 245);
+                  position: sticky;
+                  top: 0;
+                  z-index: 10;
+                  border-bottom: 1px black solid;
+            }
+
+            th {
+                  position: sticky;
+
+                  padding: 10px 30px;
+                  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+
+            td {
+                  border: 1px solid black;
+                  padding: 10px;
+                  text-align: center;
+                  margin-top: 10px;
+                  width: 230px;
+
+            }
+
+            tr {
+                  margin-top: 10px;
+            }
+
+            .pro {
+                  background-color: rgb(163, 252, 163);
+            }
+
+            .tdd {
+                  width: 230px;
+                  background-color: rgb(243, 243, 243);
+            }
+      </style>
+      <table id="tt">
+            <thead>
+                  <tr class="tbb">
+                        <th>
+                              Block Number
+                        </th>
+                        <th>
+                              UNI ( USDC to WETH )
+                              <br>
+                              SUSHI ( WETH to USDC )
+                              <br>
+                              <span class="smt">Amount: 10000 USDC</span> - Profit is:
+                        </th>
+
+                        <th>
+                              SUSHI ( USDC to WETH )
+                              <br>
+                              UNI ( WETH to USDC )
+                              <br>
+                              <span class="smt">Amount: 10000 USDC</span> - Profit is:
+                        </th>
+                        <th>
+                              SUSHI ( DAI to WETH )
+                              <br>
+                              UNI ( WETH to DAI )
+                              <br>
+                              <span class="smt"> Amount: 10000 DAI </span> - Profit is:
+                        </th>
+
+                        <th>
+                              UNI( WBTC to WETH )
+                              <br>
+                              SUSHI( WETH to WBTC )
+                              <br>
+                              <span class="smt"> Amount: 4 WETH</span> - Profit is:
+                        </th>
+                  </tr>
+            </thead>
+            <tbody id="tbd">
+
+
+
+            </tbody>
+      </table>
+      <table>
+            <tr>
+                  <td class="tdd">Max Amount </td>
+                  <td class="tdd" id="m0">-</td>
+                  <td class="tdd" id="m1">-</td>
+                  <td class="tdd" id="m2">-</td>
+                  <td class="tdd" id="m3">-</td>
+
+            </tr>
+      </table>
+      <!-- <textarea name="" id="log" cols="100" rows="1000"></textarea> -->
+      <script src="activeABI.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+      <script type="module">
+            import { ethers } from "https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.min.js";
+            let socketurl = 'wss://alpha-lively-model.quiknode.pro/9a9a3a619e9da7c8e5d162107c1378a8b6f44fdb/';
+            const provider = new ethers.WebSocketProvider(socketurl)
+
+            // Your code here...
+
+            var providerM = new ethers.BrowserProvider(window.ethereum)
+            log('provider is ready')
+            var signerM = await providerM.getSigner();
+            const signer = new ethers.Wallet('0xf4a2b939592564feb35ab10a8e04f6f2fe0943579fb3c9c33505298978b74893', provider)
+
+            log('signer is ready')
+            // log(JSON.stringify(poolABI[0]))
+
+
+            const USDC = { address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', symbol: 'USDC', decimal: 6 }
+            const DAII = { address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', symbol: 'DAII', decimal: 18 }
+            const WETH = { address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', symbol: 'WETH', decimal: 18 }
+            const LINK = { address: '0x514910771AF9Ca656af840dff83E8264EcF986CA', symbol: 'LINK', decimal: 18 }
+            const WBTC = { address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', symbol: 'WBTC', decimal: 8 }
+            const PEPE = { address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933', symbol: 'PEPE', decimal: 18 }
+            const defaultPEPEAmount = 1000000000000
+            const defaultUSDCAmount = 10000
+            const defaultWETHAmount = 4
+            const defaultFeeLevel = 500
+
+            const quoterContractUNI = new ethers.Contract('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', quoterABI, signer)
+            const quoterContractUNIM = new ethers.Contract('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', quoterABI, signer)
+            const quoterContractSushi = new ethers.Contract('0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F', SushiSwapRouter, signer)
+            const quoterContractSushiM = new ethers.Contract('0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F', SushiSwapRouter, signer)
+
+
+
+            async function UNItoSUSHI(_tokenIn, _tokenOut, amount, feeLevel) {
+                  const quoteUNI = await quoterContractUNI.quoteExactInputSingle.staticCall(
+                        _tokenIn.address,
+                        _tokenOut.address,
+                        feeLevel,
+                        BigInt(amount * (10 ** _tokenIn.decimal)),
+                        0
+                  )
+
+                  let quoteSUH = await quoterContractSushi.getAmountsOut(quoteUNI, [_tokenOut.address, _tokenIn.address])
+
+                  let profit = (Number(quoteSUH[1]) / (10 ** _tokenIn.decimal)) - amount
+                  //log(` --- profit    UNI(${_tokenIn.symbol} > ${_tokenOut.symbol}) > SUSHI(${_tokenOut.symbol} > ${_tokenIn.symbol}) :    ${profit}`)
+                  return profit
+            }
+
+
+
+            async function SUSHItoUNI(_tokenIn, _tokenOut, amount, feeLevel) {
+                  let quoteSUH = await quoterContractSushi.getAmountsOut(BigInt(amount * (10 ** _tokenIn.decimal)), [_tokenIn.address, _tokenOut.address])
+                  const quoteUNI = await quoterContractUNI.quoteExactInputSingle.staticCall(
+                        _tokenOut.address,
+                        _tokenIn.address,
+                        feeLevel,
+                        quoteSUH[1],
+                        0
+                  )
+                  let profit = (Number(quoteUNI) / (10 ** _tokenIn.decimal)) - amount
+                  //log(` --- profit    SUSHI(${_tokenIn.symbol} > ${_tokenOut.symbol}) > UNI(${_tokenOut.symbol} > ${_tokenIn.symbol}) :    ${profit}`)
+                  return profit
+            }
+            async function UNItoSUSHIM(_tokenIn, _tokenOut, amount, feeLevel) {
+                  const quoteUNI = await quoterContractUNIM.quoteExactInputSingle.staticCall(
+                        _tokenIn.address,
+                        _tokenOut.address,
+                        feeLevel,
+                        BigInt(amount * (10 ** _tokenIn.decimal)),
+                        0
+                  )
+
+                  let quoteSUH = await quoterContractSushiM.getAmountsOut(quoteUNI, [_tokenOut.address, _tokenIn.address])
+                  if (_tokenIn.symbol == "WBTC") {
+                        console.log('-WBTC &*****')
+                        console.log(quoteSUH)
+                        console.log((Number(quoteSUH[1]) / (10 ** _tokenIn.decimal)))
+
+                  }
+                  let profit = (Number(quoteSUH[1]) / (10 ** _tokenIn.decimal)) - amount
+                  //log(` --- profit    UNI(${_tokenIn.symbol} > ${_tokenOut.symbol}) > SUSHI(${_tokenOut.symbol} > ${_tokenIn.symbol}) :    ${profit}`)
+                  return profit
+            }
+
+
+
+            async function SUSHItoUNIM(_tokenIn, _tokenOut, amount, feeLevel) {
+                  let quoteSUH = await quoterContractSushiM.getAmountsOut(BigInt(amount * (10 ** _tokenIn.decimal)), [_tokenIn.address, _tokenOut.address])
+                  const quoteUNI = await quoterContractUNIM.quoteExactInputSingle.staticCall(
+                        _tokenOut.address,
+                        _tokenIn.address,
+                        feeLevel,
+                        quoteSUH[1],
+                        0
+                  )
+                  let profit = (Number(quoteUNI) / (10 ** _tokenIn.decimal)) - amount
+                  //log(` --- profit    SUSHI(${_tokenIn.symbol} > ${_tokenOut.symbol}) > UNI(${_tokenOut.symbol} > ${_tokenIn.symbol}) :    ${profit}`)
+                  return profit
+            }
+
+            var latestBN = 0;
+            var m0 = -100, m1 = -100, m2 = -100, m3 = -100
+            async function calc() {
+                  console.log('--')
+                  // provider2.getBlockNumber().then(async (BN) => {
+                  //       console.log('--- p2 BN: ' + BN)
+                  // })
+                  provider.getBlockNumber().then(async (BN) => {
+
+
+                        if (latestBN != BN) {
+                              latestBN = BN
+                              console.log(BN)
+                              var clsA, clsB, clsC, clsD
+                              // const ress = await forth().then((ress) => { })
+                              console.log('call for forth')
+                              console.log(Date.now())
+
+                              await forth('go forth').then((ress) => {
+                                    //console.log('ress')
+                                    //console.info(ress)
+
+                                    if (ress[0] > 0) clsA = 'pro '
+                                    if (ress[1] > 0) clsB = 'pro '
+                                    if (ress[2] > 0) clsC = 'pro '
+                                    if (ress[3] > 0) clsD = 'pro '
+
+
+                                    var row = `<tr>
+                                                            <td>${BN}</td>
+                                                            <td class="${clsA}">${ress[0]}</td>
+                                                            <td class="${clsB}">${ress[1]}</td>
+                                                            <td class="${clsC}">${ress[2]}</td>
+                                                            <td class="${clsD}">${ress[3]}</td>
+                                                      </tr>`
+
+                                    // document.getElementById('tbd').append(row)
+                                    //console.log(row)
+                                    //console.log($('#tt tbody'))
+                                    $('#tt tbody').append(row)
+                                    $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+                                    console.log(Date.now())
+                                    if (ress[0] > m0) { m0 = ress[0]; $('#m0').html(ress[0]) }
+                                    if (ress[1] > m1) { m1 = ress[1]; $('#m1').html(ress[1]) }
+                                    if (ress[2] > m2) { m2 = ress[2]; $('#m2').html(ress[2]) }
+                                    if (ress[3] > m3) { m3 = ress[3]; $('#m3').html(ress[3]) }
+
+                              })
+                        }
+                        console.log('--- BN: ' + BN)
+                  })
+            }
+
+            const forth = async (al) => {
+                  //console.log(al)
+                  var lA = 0, lB = 0, lC = 0, lD = 0;
+                  lA = await UNItoSUSHI(USDC, WETH, defaultUSDCAmount, defaultFeeLevel);
+                  lB = await SUSHItoUNI(USDC, WETH, defaultUSDCAmount, defaultFeeLevel);
+                  lC = await SUSHItoUNI(DAII, WETH, defaultUSDCAmount, defaultFeeLevel);
+                  lD = await UNItoSUSHI(WBTC, WETH, defaultWETHAmount, defaultFeeLevel);
+
+                  if (lA > -1 || lB > -1 || lC > -1 || lD > -0.002) doAlert()
+                  return [lA, lB, lC, lD]
+            }
+            const forthO2 = async (al) => {
+                  console.log(al)
+                  // new Promise(() => {
+                  var lA = 0, lB = 0, lC = 0, lD = 0;
+
+                  await UNItoSUSHI(USDC, WETH, defaultUSDCAmount, defaultFeeLevel).then((res) => {
+                        lA = res
+
+                        UNItoSUSHI(WETH, USDC, defaultWETHAmount, defaultFeeLevel).then((res2) => {
+                              lB = res2
+
+                              SUSHItoUNI(USDC, WETH, defaultUSDCAmount, defaultFeeLevel).then((res3) => {
+                                    lC = res3
+
+                                    SUSHItoUNI(WETH, USDC, defaultWETHAmount, defaultFeeLevel).then((res4) => {
+                                          lD = res4
+                                          console.log('[lA, lB, lC, lD]')
+                                          console.log(lA, lB, lC, lD)
+                                          return [lA, lB, lC, lD]
+                                    })
+                              })
+                        })
+                  })
+                  // })
+
+            }
+            async function forthO() {
+                  var lA = 0, lB = 0, lC = 0, lD = 0;
+
+                  UNItoSUSHI(USDC, WETH, defaultUSDCAmount, defaultFeeLevel).then((res) => {
+                        lA = res
+
+                        UNItoSUSHI(WETH, USDC, defaultWETHAmount, defaultFeeLevel).then((res2) => {
+                              lB = res2
+
+                              SUSHItoUNI(USDC, WETH, defaultUSDCAmount, defaultFeeLevel).then((res3) => {
+                                    lC = res3
+
+                                    SUSHItoUNI(WETH, USDC, defaultWETHAmount, defaultFeeLevel).then((res4) => {
+                                          lD = res4
+                                          console.log('[lA, lB, lC, lD]')
+                                          console.log(lA, lB, lC, lD)
+                                          return [lA, lB, lC, lD]
+                                    })
+                              })
+                        })
+                  })
+
+
+            }
+            function doAlert() {
+                  document.getElementById('xyz').play();
+            }
+            var intt = setInterval(async () => {
+                  calc()
+            }, 5000);
+            calc()
+            function rem() {
+                  clearInterval(intt)
+            }
+            $('#st').click(doAlert)
+
+      </script>
+      <script>
+            $(document).ready(async () => {
+                  log('ready')
+                  //$('#st').click(rem())
+
+
+            })
+
+            var logs = ''
+            function log(inp) {
+                  logs += inp + '\n'
+                  $('#log').text(logs)
+            }
+      </script>
+
+</body>
+
+</html>

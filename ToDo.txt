@@ -1,0 +1,6 @@
+Generate a view to:
+1- Keep server alive
+2- Show the broadcast feed
+3- Show pendings tx with extra info
+3- 1- Decoded tx data 
+3- 2- Calculated impact
