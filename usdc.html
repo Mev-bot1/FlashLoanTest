@@ -4,12 +4,12 @@
 <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Arbitrage Bot</title>
+      <title>Arbitrage Bot USDC</title>
 </head>
 
 <body>
       <audio id="xyz" src="https://v.delgarm.com/mp3/835/2022/10/07/6340927d26908.mp3" preload="auto"></audio>
-      <h2>Arbitrage Scanner</h2>
+      <h2>Arbitrage Scanner (USDC)</h2>
       <style>
             .smt {
                   font-size: 0.7rem;
@@ -84,20 +84,21 @@
                               <span class="smt">Amount: 10000 USDC</span> - Profit is:
                         </th>
                         <th>
-                              SUSHI ( DAI to WETH )
+                              UNI ( WETH to USDC )
                               <br>
-                              UNI ( WETH to DAI )
+                              SUSHI ( USDC to WETH )
                               <br>
-                              <span class="smt"> Amount: 10000 DAI </span> - Profit is:
+                              <span class="smt">Amount: 4 WETH</span> - Profit is:
                         </th>
 
                         <th>
-                              UNI( WBTC to WETH )
+                              SUSHI ( WETH to USDC )
                               <br>
-                              SUSHI( WETH to WBTC )
+                              UNI ( USDC to WETH )
                               <br>
-                              <span class="smt"> Amount: 4 WETH</span> - Profit is:
+                              <span class="smt">Amount: 4 WETH</span> - Profit is:
                         </th>
+
                   </tr>
             </thead>
             <tbody id="tbd">
@@ -122,8 +123,53 @@
       <script type="module">
             import { ethers } from "https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.min.js";
             let socketurl = 'wss://alpha-lively-model.quiknode.pro/9a9a3a619e9da7c8e5d162107c1378a8b6f44fdb/';
-            const provider = new ethers.WebSocketProvider(socketurl)
+            var provider = new ethers.WebSocketProvider(socketurl)
+            //var provider;
 
+            const EXPECTED_PONG_BACK = 5000
+            const KEEP_ALIVE_CHECK_INTERVAL = 2500
+
+            //export const startConnection = () => {
+            /*          const startConnection = () => {
+                            provider = new ethers.WebSocketProvider(socketurl)
+          
+                            console.info(provider.websocket)
+          
+                            let pingTimeout = null
+                            let keepAliveInterval = null
+          
+                            provider.websocket.onopen = (() => {
+                                  keepAliveInterval = setInterval(() => {
+                                        console.log('Checking if the connection is alive, sending a ping')
+          
+                                        provider.websocket.ping()
+          
+                                        // Use `WebSocket#terminate()`, which immediately destroys the connection,
+                                        // instead of `WebSocket#close()`, which waits for the close timer.
+                                        // Delay should be equal to the interval at which your server
+                                        // sends out pings plus a conservative assumption of the latency.
+                                        pingTimeout = setTimeout(() => {
+                                              provider.websocket.terminate()
+                                        }, EXPECTED_PONG_BACK)
+                                  }, KEEP_ALIVE_CHECK_INTERVAL)
+          
+                                  // TODO: handle contract listeners setup + indexing
+                            })
+          
+                            provider.websocket.onclose = (() => {
+                                  logger.error('The websocket connection was closed')
+                                  clearInterval(keepAliveInterval)
+                                  clearTimeout(pingTimeout)
+                                  startConnection()
+                            })
+          
+                            provider.websocket.onpong = (() => {
+                                  console.log('Received pong, so connection is alive, clearing the timeout')
+                                  clearInterval(pingTimeout)
+                            })
+                      }
+          */
+            //startConnection()
             // Your code here...
 
             //var providerM = new ethers.BrowserProvider(window.ethereum)
@@ -221,35 +267,48 @@
                   return profit
             }
 
+            var tried = 0
             var latestBN = 0;
             var m0 = -100, m1 = -100, m2 = -100, m3 = -100
             async function calc() {
                   console.log('--')
+                  if (provider.websocket.readyState === 1) { } else {
+                        //provider = new ethers.WebSocketProvider(socketurl)
+                        tried++
+                  }
+                  if (tried > 5) {
+                        window.location = window.location
+                  }
                   // provider2.getBlockNumber().then(async (BN) => {
                   //       console.log('--- p2 BN: ' + BN)
                   // })
-                  provider.getBlockNumber().then(async (BN) => {
+
+                  try {
 
 
-                        if (latestBN != BN) {
-                              latestBN = BN
-                              console.log(BN)
-                              var clsA, clsB, clsC, clsD
-                              // const ress = await forth().then((ress) => { })
-                              console.log('call for forth')
-                              console.log(Date.now())
 
-                              await forth('go forth').then((ress) => {
-                                    //console.log('ress')
-                                    //console.info(ress)
-
-                                    if (ress[0] > 0) clsA = 'pro '
-                                    if (ress[1] > 0) clsB = 'pro '
-                                    if (ress[2] > 0) clsC = 'pro '
-                                    if (ress[3] > 0) clsD = 'pro '
+                        provider.getBlockNumber().then(async (BN) => {
 
 
-                                    var row = `<tr>
+                              if (latestBN != BN) {
+                                    latestBN = BN
+                                    console.log(BN)
+                                    var clsA, clsB, clsC, clsD
+                                    // const ress = await forth().then((ress) => { })
+                                    console.log('call for forth')
+                                    console.log(Date.now())
+
+                                    await forth('go forth').then((ress) => {
+                                          //console.log('ress')
+                                          //console.info(ress)
+
+                                          if (ress[0] > 0) clsA = 'pro '
+                                          if (ress[1] > 0) clsB = 'pro '
+                                          if (ress[2] > 0) clsC = 'pro '
+                                          if (ress[3] > 0) clsD = 'pro '
+
+
+                                          var row = `<tr>
                                                             <td>${BN}</td>
                                                             <td class="${clsA}">${ress[0]}</td>
                                                             <td class="${clsB}">${ress[1]}</td>
@@ -257,23 +316,30 @@
                                                             <td class="${clsD}">${ress[3]}</td>
                                                       </tr>`
 
-                                    // document.getElementById('tbd').append(row)
-                                    //console.log(row)
-                                    //console.log($('#tt tbody'))
-                                    $('#tt tbody').append(row)
-                                    $("html, body").animate({ scrollTop: $(document).height() }, 1000);
-                                    console.log(Date.now())
-                                    if (ress[0] > m0) { m0 = ress[0]; $('#m0').html(ress[0]) }
-                                    if (ress[1] > m1) { m1 = ress[1]; $('#m1').html(ress[1]) }
-                                    if (ress[2] > m2) { m2 = ress[2]; $('#m2').html(ress[2]) }
-                                    if (ress[3] > m3) { m3 = ress[3]; $('#m3').html(ress[3]) }
+                                          // document.getElementById('tbd').append(row)
+                                          //console.log(row)
+                                          //console.log($('#tt tbody'))
+                                          $('#tt tbody').append(row)
+                                          $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+                                          console.log(Date.now())
+                                          if (ress[0] > m0) { m0 = ress[0]; $('#m0').html(ress[0]) }
+                                          if (ress[1] > m1) { m1 = ress[1]; $('#m1').html(ress[1]) }
+                                          if (ress[2] > m2) { m2 = ress[2]; $('#m2').html(ress[2]) }
+                                          if (ress[3] > m3) { m3 = ress[3]; $('#m3').html(ress[3]) }
 
-                              })
-                        }
-                        console.log('--- BN: ' + BN)
-                  }).catch(() => {
+                                    })
+                              }
+                              console.log('--- BN: ' + BN)
+                        })
+                  } catch (error) {
+                        console.error('Connection failed. ', error)
                         window.alert('Connection failed.  \nRefresh the page.')
-                  })
+                  }
+
+                  if (tried > 20) {
+                        console.error('Connection failed. ', error)
+                        window.alert('Connection failed.  \nRefresh the page.')
+                  }
             }
 
             const forth = async (al) => {
@@ -281,10 +347,10 @@
                   var lA = 0, lB = 0, lC = 0, lD = 0;
                   lA = await UNItoSUSHI(USDC, WETH, defaultUSDCAmount, defaultFeeLevel);
                   lB = await SUSHItoUNI(USDC, WETH, defaultUSDCAmount, defaultFeeLevel);
-                  lC = await SUSHItoUNI(DAII, WETH, defaultUSDCAmount, defaultFeeLevel);
-                  lD = await UNItoSUSHI(WBTC, WETH, defaultWETHAmount, defaultFeeLevel);
+                  lC = await UNItoSUSHI(WETH, USDC, defaultWETHAmount, defaultFeeLevel);
+                  lD = await SUSHItoUNI(WETH, USDC, defaultWETHAmount, defaultFeeLevel);
 
-                  if (lA > -1 || lB > -1 || lC > -1 || lD > -0.002) doAlert()
+                  if (lA > -1 || lB > -1 || lC > -0.001 || lD > -0.001) doAlert()
                   return [lA, lB, lC, lD]
             }
             const forthO2 = async (al) => {
@@ -348,6 +414,7 @@
                   clearInterval(intt)
             }
             $('#st').click(doAlert)
+
 
       </script>
       <script>
