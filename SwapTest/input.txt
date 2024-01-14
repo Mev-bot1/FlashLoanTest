@@ -1,0 +1,13 @@
+//Inputs:
+_tokenIn = token_addresses['BTCB']
+_tokenOut = token_addresses['USDT']
+_amountIn = 10000
+_fee = 3000
+_recipient = 0x8b5C6432Fd53f7018735cB37c318224AE40b5512 //(the contract itself)
+_deadlineAdd = 0
+_amountOutMinimum = 0 
+_sqrtPriceLimitX96 = 0
+_router = 0x1b81D678ffb9C0263b24A97847620C99d213eB14 //(the router address)
+
+// Output: (uint256)
+// The output expected to be a bigInt representing the amount of tokenOut after swap is done.
