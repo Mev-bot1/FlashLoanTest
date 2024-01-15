@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Swapper</title>
+      <style>
+            .sm {
+                  font-size: 0.7rem;
+            }
+
+            .loadingC {
+
+                  -webkit-animation: spin 2s linear infinite;
+                  -moz-animation: spin 2s linear infinite;
+                  animation: spin 2s linear infinite;
+            }
+
+            @-moz-keyframes spin {
+                  100% {
+                        -moz-transform: rotate(360deg);
+                  }
+            }
+
+            @-webkit-keyframes spin {
+                  100% {
+                        -webkit-transform: rotate(360deg);
+                  }
+            }
+
+            @keyframes spin {
+                  100% {
+                        -webkit-transform: rotate(360deg);
+                        transform: rotate(360deg);
+                  }
+            }
+
+            input {
+                  min-width: 350px;
+            }
+      </style>
+</head>
+
+<body>
+      <h1>Swapper</h1>
+      <br>
+      <p>Wallet balance: <span id="balance"> ..... </span> BNB &nbsp;&nbsp; - &nbsp;current block: <span id="bn"> .....
+            </span></p>
+      <p>
+            Status: <span id="Status"><img class="loadingC" src="./load.png" alt="" width="16" height="16"></span>
+      </p>
+      <br>
+      <hr>
+      <div class="inps">
+
+            <label for="">tokenIn:</label>
+            <br>
+            <input type="text" id="tokenIn"> <button id="checkBal">Check balance</button> <span>balance is: <span
+                        id="cnBal"></span></span>
+
+            <br>
+            <br>
+            <label for="">tokenOut:</label>
+            <br>
+            <input type="text" id="tokenOut">
+
+            <br>
+            <br>
+            <label for="">amountIn:</label>
+            <br>
+            <input type="text" id="amountIn">
+
+            <br>
+            <br>
+            <label for="">fee:</label>
+            <br>
+            <input type="text" id="fee">
+
+            <br>
+            <br>
+            <label for="">recipient:</label>
+            <br>
+            <input type="text" id="recipient" value="0x8b5C6432Fd53f7018735cB37c318224AE40b5512">
+
+            <br>
+            <br>
+            <label for="">router:</label>
+            <br>
+            <input type="text" id="router" value="0x1b81D678ffb9C0263b24A97847620C99d213eB14">
+
+            <p class="sm">This default value is set to pancakeswap v3 router.</p>
+
+
+      </div>
+      <br>
+      <br>
+      <button id="swapB">Swap</button>
+
+      <br>
+      <br>
+      <div>
+            <h5>Token Address:</h5>
+            <p> <b> BTCB:</b></p>
+            <p>0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c</p>
+            <p> <b>USDT:</b></p>
+            <p>0x55d398326f99059fF775485246999027B3197955</p>
+            <p> <b>WBNB:</b></p>
+            <p>0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c</p>
+
+      </div>
+
+
+      <script>
+            const contractAddress = "0x8b5C6432Fd53f7018735cB37c318224AE40b5512"
+            const ABI = [
+                  {
+                        "inputs": [
+                              {
+                                    "internalType": "address",
+                                    "name": "_token0",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_token1",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_token2",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_flashPool",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "_amount0",
+                                    "type": "uint256"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "_amount1",
+                                    "type": "uint256"
+                              },
+                              {
+                                    "internalType": "uint24",
+                                    "name": "_fee",
+                                    "type": "uint24"
+                              }
+                        ],
+                        "name": "FlashAndSwap",
+                        "outputs": [],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                  },
+                  {
+                        "inputs": [
+                              {
+                                    "internalType": "address",
+                                    "name": "_tokenIn",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_spender",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "_amountIn",
+                                    "type": "uint256"
+                              }
+                        ],
+                        "name": "indApprove",
+                        "outputs": [
+                              {
+                                    "internalType": "bool",
+                                    "name": "",
+                                    "type": "bool"
+                              }
+                        ],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                  },
+                  {
+                        "inputs": [
+                              {
+                                    "internalType": "address",
+                                    "name": "adr",
+                                    "type": "address"
+                              }
+                        ],
+                        "name": "myBalance",
+                        "outputs": [
+                              {
+                                    "internalType": "uint256",
+                                    "name": "",
+                                    "type": "uint256"
+                              }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                  },
+                  {
+                        "inputs": [
+                              {
+                                    "internalType": "address",
+                                    "name": "_tokenIn",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_tokenOut",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "_amountIn",
+                                    "type": "uint256"
+                              },
+                              {
+                                    "internalType": "uint24",
+                                    "name": "_fee",
+                                    "type": "uint24"
+                              }
+                        ],
+                        "name": "singleSwapV3Pan",
+                        "outputs": [
+                              {
+                                    "internalType": "uint256",
+                                    "name": "",
+                                    "type": "uint256"
+                              }
+                        ],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                  },
+                  {
+                        "inputs": [
+                              {
+                                    "internalType": "address",
+                                    "name": "_router",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_tokenIn",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_tokenOut",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "_amountIn",
+                                    "type": "uint256"
+                              },
+                              {
+                                    "internalType": "uint24",
+                                    "name": "_fee",
+                                    "type": "uint24"
+                              }
+                        ],
+                        "name": "singleSwapV3Uin",
+                        "outputs": [
+                              {
+                                    "internalType": "uint256",
+                                    "name": "",
+                                    "type": "uint256"
+                              }
+                        ],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                  },
+                  {
+                        "inputs": [
+                              {
+                                    "internalType": "address",
+                                    "name": "_tokenIn",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_tokenOut",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "_amountIn",
+                                    "type": "uint256"
+                              },
+                              {
+                                    "internalType": "uint24",
+                                    "name": "_fee",
+                                    "type": "uint24"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_recipient",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "_deadlineAdd",
+                                    "type": "uint256"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "_amountOutMinimum",
+                                    "type": "uint256"
+                              },
+                              {
+                                    "internalType": "uint160",
+                                    "name": "_sqrtPriceLimitX96",
+                                    "type": "uint160"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_router",
+                                    "type": "address"
+                              }
+                        ],
+                        "name": "singleTester",
+                        "outputs": [
+                              {
+                                    "internalType": "uint256",
+                                    "name": "",
+                                    "type": "uint256"
+                              }
+                        ],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                  },
+                  {
+                        "inputs": [
+                              {
+                                    "internalType": "address",
+                                    "name": "_tokenIn",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "address",
+                                    "name": "_tokenOut",
+                                    "type": "address"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "_amountIn",
+                                    "type": "uint256"
+                              }
+                        ],
+                        "name": "singleV2Swap",
+                        "outputs": [
+                              {
+                                    "internalType": "uint256[]",
+                                    "name": "",
+                                    "type": "uint256[]"
+                              }
+                        ],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                  },
+                  {
+                        "inputs": [
+                              {
+                                    "internalType": "uint256",
+                                    "name": "fee0",
+                                    "type": "uint256"
+                              },
+                              {
+                                    "internalType": "uint256",
+                                    "name": "fee1",
+                                    "type": "uint256"
+                              },
+                              {
+                                    "internalType": "bytes",
+                                    "name": "data",
+                                    "type": "bytes"
+                              }
+                        ],
+                        "name": "uniswapV3FlashCallback",
+                        "outputs": [],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                  },
+                  {
+                        "inputs": [
+                              {
+                                    "internalType": "address",
+                                    "name": "adr",
+                                    "type": "address"
+                              }
+                        ],
+                        "name": "with",
+                        "outputs": [],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                  }
+            ]
+      </script>
+      <script type="module">
+            //#region init
+            import { ethers } from "https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.min.js";
+            // Your code here...
+            let signer = null;
+
+            let provider;
+            if (window.ethereum == null) {
+
+                  // If MetaMask is not installed, we use the default provider,
+                  // which is backed by a variety of third-party services (such
+                  // as INFURA). They do not have private keys installed,
+                  // so they only have read-only access
+                  console.log("MetaMask not installed; using read-only defaults")
+                  provider = ethers.getDefaultProvider()
+                  document.getElementById('Status').innerHTML = "Error: No metamask."
+
+            } else {
+
+                  // Connect to the MetaMask EIP-1193 object. This is a standard
+                  // protocol that allows Ethers access to make all read-only
+                  // requests through MetaMask.
+                  provider = new ethers.BrowserProvider(window.ethereum)
+                  console.log('provider set from user metamask')
+                  //console.info(provider)
+
+                  // It also provides an opportunity to request access to write
+                  // operations, which will be performed by the private key
+                  // that MetaMask manages for the user.
+                  signer = await provider.getSigner();
+                  const address = await signer.getAddress();
+                  console.log('address: ' + address)
+
+
+                  // Look up the current block number (i.e. height)
+                  var bn = await provider.getBlockNumber()
+                  console.log('getBlockNumber' + bn)
+                  document.getElementById('bn').innerHTML = bn
+
+                  // 18994491
+
+                  // Get the current balance of an account (by address or ENS name)
+                  var balance = await provider.getBalance(address)
+                  // 4085267032476673080n
+
+                  // Since the balance is in wei, you may wish to display it
+                  // in ether instead.
+                  document.getElementById('balance').innerHTML = (Number(balance)) / (10 ** 18)
+                  document.getElementById('Status').innerHTML = "Ready: Wating for commend."
+
+                  // '4.08526703247667308'
+
+            }
+
+            //#endregion
+
+
+            document.getElementById('swapB').addEventListener('click', swap)
+
+            async function swap() {
+                  document.getElementById('Status').innerHTML = `<img class="loadingC" src="./load.png" alt="" width="16" height="16">`
+
+                  const tokenIn = document.getElementById('tokenIn').value
+                  const tokenOut = document.getElementById('tokenOut').value
+                  const amountIn = document.getElementById('amountIn').value
+                  const fee = document.getElementById('fee').value
+                  const recipient = document.getElementById('recipient').value
+                  const router = document.getElementById('router').value
+
+
+                  var contract = new ethers.Contract(contractAddress, ABI, signer)
+                  try {
+
+
+                        var res = await contract.singleTester(tokenIn, tokenOut,
+                              Number(amountIn), Number(fee), recipient, 0, 0, 0, router)
+                        console.info(res)
+
+                        document.getElementById('Status').innerHTML = 'Success. <br> See transaction on bscscan  <a href="https://bscscan.com/tx/' + res.hash + '" target="_blank"> here</a>   <br> or see contract transactions on bscscan<a href="https://bscscan.com/address/0x8b5C6432Fd53f7018735cB37c318224AE40b5512" target="_blank"> here</a>'
+
+
+                  } catch (error) {
+                        document.getElementById('Status').innerHTML = "Error: " + error
+                  }
+
+            }
+
+            document.getElementById('checkBal').addEventListener('click', checkBalance)
+            async function checkBalance() {
+
+                  document.getElementById('cnBal').innerHTML = `<img class="loadingC" src="./load.png" alt="" width="16" height="16">`
+                  const tokenIn = document.getElementById('tokenIn').value
+                  if (tokenIn.length < 42) {
+                        window.alert('TokenIn address is not correct')
+                        document.getElementById('cnBal').innerHTML = ''
+                  } else {
+
+                        try {
+
+
+                              var contract = new ethers.Contract(contractAddress, ABI, signer)
+                              var contractBalance = await contract.myBalance(tokenIn);
+                              console.log('con bal: ')
+                              console.info(contractBalance)
+                              document.getElementById('cnBal').innerHTML = contractBalance
+                        }
+                        catch (error) {
+                              document.getElementById('cnBal').innerHTML = "Error: call failed. " + error
+
+                        }
+                  }
+            }
+
+
+      </script>
+</body>
+
+</html>
