@@ -1,0 +1,10 @@
+// Function: FlashAndSwap
+
+//inputs:
+_token0 = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c" // WBNB
+_token1 = "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c" // BTCB
+_token2 = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56" // USDT
+_flashPool = ""0xCB99FE720124129520f7a09Ca3CBEF78D58Ed934" 
+_amount0 = 0
+_amount1 = 100000
+_fee = 500
