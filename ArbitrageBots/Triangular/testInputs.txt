@@ -15,6 +15,3 @@ _path = [0,1,2] // 0: Uniswap V3,  1:Pancakeswap V3,  2:Pancakeswap V2
 
 
 
-
-expalaination about uniswap smart contract error codes:
-https://docs.uniswap.org/contracts/v3/reference/error-codes
