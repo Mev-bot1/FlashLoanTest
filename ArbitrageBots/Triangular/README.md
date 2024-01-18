@@ -1,4 +1,4 @@
-## Triangula Arbitrage
+## Triangular Arbitrage
 
 RobotFlashSwapBSC smart contract deployed on Binance Smar Chain at 0xb4750167Fb0DCD7d818f35D71fbba3310396cC3c
 
@@ -30,7 +30,7 @@ Make Sure the fee for all V3 pools are the same and passed to the contract corre
 
 
 
-### flashpoo
+### flashpool
 The flashpool is a V3 pool where the loan will be taken from. The pool contract .token0 must be equal to the token we want to borrow. 
 The flashpool can't be the same as the pools we want to swap:
 
