@@ -1,13 +1,19 @@
 // Uniswap V3
 // exactInputSingle
 
+
+const mainInput = 10**18
+const plus = 1000000000000000
+
+
+
 var myContrac2 = new Contract( routerContractAddress, ABI)
 var Params = {
                 tokenIn: _tokenIn,     // WBNB
                 tokenOut: _tokenOut,  // BTCB
                 fee: _fee, //500
                 recipient: address(this),
-                amountIn: _amountIn,  //1000000
+                amountIn: mainInput,
                 amountOutMinimum: 0,
                 sqrtPriceLimitX96: 0
             }
@@ -47,7 +53,9 @@ var myContract2 = new Contract( routerContractAddress, ABI)
 // [amountIn, AmountOut]
 
 
-
+if( (amountOut3[1] - plus) > mainInput ){
+  FlashAndSwap()
+}
 
 
 
