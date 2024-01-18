@@ -1,0 +1,54 @@
+// Uniswap V3
+// exactInputSingle
+
+var myContrac2 = new Contract( routerContractAddress, ABI)
+var Params = {
+                tokenIn: _tokenIn,     // WBNB
+                tokenOut: _tokenOut,  // BTCB
+                fee: _fee, //500
+                recipient: address(this),
+                amountIn: _amountIn,  //1000000
+                amountOutMinimum: 0,
+                sqrtPriceLimitX96: 0
+            }
+
+ const amountOut1 = myContract.ExactInputSingleParams(Params);
+ 
+ 
+ 
+ // Pancake V3
+// exactInputSingle
+
+var myContract2 = new Contract( routerContractAddress, ABI)
+var Params = {
+                tokenIn: _tokenIn,     // WBNB
+                tokenOut: _tokenOut,  // BTCB
+                fee: _fee, //500
+                recipient: address(this),
+                deadline: currentBlockNuumber;  // 45347308
+                amountIn: _amountIn,  //1000000
+                amountOutMinimum: 0,
+                sqrtPriceLimitX96: 0
+            }
+
+ const amountOut2 = myContractc2.ExactInputSingleParams(Params);
+
+
+ // Pancake V2
+// exactInputSingle
+
+var myContract2 = new Contract( routerContractAddress, ABI)
+
+
+ const amountOut3 = myContractc2.swapExactTokensForTokens(
+     amountOut2, 0, [USDT, WBNB],  address(this), currentBlockNuumber
+ );
+
+// [amountIn, AmountOut]
+
+
+
+
+
+
+ 
