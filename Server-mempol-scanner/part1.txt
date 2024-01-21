@@ -1,0 +1,26 @@
+The address of pancakeswap rputer: "0x10ED43C718714eb63d5aA57B78B54704E256024E"
+
+wsProvider = new ethers.WebSocketProvider("wss://mainnet.infura.io/ws/v3/a427de2cb7934d87b56cadcd4e4db704"); //a427de2cb7934d87b56cadcd4e4db704 => is API key. Rreplace with your API key (Generate a new API key on you dashboard specified for the Binance Smar chain).
+
+baseUrl : "https://api.bscscan.com/api"
+
+binanceApiKey = E5HBPC633PQYABW64DEH3ZFK6RPHCWUXGT
+
+wsProvider.on('pending', async (tx) => {    //Your code here....    })
+
+example of code:
+
+const txInfo = await wsProvider.getTransaction(tx)
+
+ if (txInfo.to == '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45') { analyze(txInfo) }
+
+
+analyze( data ){
+
+            const deData = abiDecoder.decodeMethod(data.data)  // initial decode
+            let second = deData.params[1].value[0];            // used to encode
+            let secDecode = abiDecoder.decodeMethod(second)    // use that method to decode.
+
+            retunr ({ txData: secDecode.params[0].value, txHash: data.hash, txValue: data.value })
+
+}
