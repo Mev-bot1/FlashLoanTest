@@ -17,7 +17,8 @@ const txInfo = await wsProvider.getTransaction(tx)
 
 // Example of the output:
 
-`
+```
+
 {
    "blockNumber": "13818584",
    "timeStamp": "1639689761",
@@ -39,7 +40,7 @@ const txInfo = await wsProvider.getTransaction(tx)
 }
 
 
-`
+```
 
 
 ## Part 2: Decoding tx data.
@@ -68,6 +69,24 @@ analyze( data ){
 
 }
 
+
+
+
+//Example Output: 
+
+```
+data = {
+   "amount": 100000000000000000000,
+   "amountOutMin": 109216738203213100630480,
+   "path": [0x55d398326f99059fF775485246999027B3197955,
+            0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c,
+            0x066717FEb54A7212C1DD6B3148267C6bC1282999],
+   "to": "0x588d887ED6F73D192329720e95268785aBa3E9eE",
+   "...." : ".........."
+}
+
+
+```
 
 
 
