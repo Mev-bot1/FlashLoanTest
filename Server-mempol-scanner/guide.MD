@@ -18,7 +18,7 @@ const txInfo = await wsProvider.getTransaction(tx)
 
 
 
-## Part 2: deciding tx data.
+## Part 2: Decoding tx data.
 
 
 var DATA;
@@ -41,7 +41,7 @@ analyze( data ){
 
 
 
-## Part 3: fetching price.
+## Part 3: Quoting price.
 
 import Quoter_V2 from "https://github.com/Mev-bot1/FlashLoanTest/blob/main/ArbitrageBots/ServerTools/contractAddress.json"
 
