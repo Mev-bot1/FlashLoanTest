@@ -22,9 +22,15 @@ const txInfo = await wsProvider.getTransaction(tx)
 
 
 var DATA;
- if (txInfo.to == '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45') { 
+// check  if its for our target router
+ if (txInfo.to == '0x10ED43C718714eb63d5aA57B78B54704E256024E') {  
+
+
   DATA = analyze(txInfo) 
+
   // Do part 3
+
+
 }
 
 
