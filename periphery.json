@@ -1,0 +1,9 @@
+[
+  {
+    "network": "BSC Mainnet",
+    "name": "ISwapRouter addresses",
+    "pancakeRouterV3" = "0x1b81D678ffb9C0263b24A97847620C99d213eB14",
+    "uniSwapRouterV3" = "0xB971eF87ede563556b2ED4b1C0b0019111Dd85d2",
+    "abi link": "https://github.com/Uniswap/v3-periphery/blob/main/contracts/interfaces/ISwapRouter.sol"
+  }
+]
